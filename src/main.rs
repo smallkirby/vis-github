@@ -1,4 +1,4 @@
-use vis_github::github::user::fetch_user;
+use vis_github::github::repo::fetch_repositories;
 use vis_github::context::Context;
 
 fn main() {
@@ -7,8 +7,11 @@ fn main() {
     cache_path: "./vis-cache".into(),
     force_use_cache: true,
     apitoken: None,
+    ignore_fork: true,
+    ignore_private: true,
+    commit_limit_per_repo: 999,
   };
 
-  let skb = fetch_user(&context);
+  let skb = fetch_repositories(&context);
   println!("{:?}", skb);
 }
