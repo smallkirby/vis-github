@@ -22,19 +22,19 @@ pub struct Repository {
   pub default_branch: String,
 }
 
-fn fetchRepositoriesFromFile(owner: &str, cache_dir: &str) -> Vec<Repository> {
+fn fetch_repositories_from_file(owner: &str, cache_dir: &str) -> Vec<Repository> {
   let jstring = fs::read_to_string(format!("{}/{}/repos.json", cache_dir, owner)).unwrap();
   let json: Vec<Repository> = serde_json::from_str(&jstring).unwrap();
   json
 }
 
-fn fetchRepositoriesFromNet(owner: &str) -> Vec<Repository> {
+fn fetch_repositories_from_net(_owner: &str) -> Vec<Repository> {
   unimplemented!();
 }
 
-pub fn fetchRepositories(context: &Context) -> Vec<Repository> {
+pub fn fetch_repositories(context: &Context) -> Vec<Repository> {
   if context.force_use_cache {
-    fetchRepositoriesFromFile(&context.owner, &context.cache_path)
+    fetch_repositories_from_file(&context.owner, &context.cache_path)
   } else {
     unimplemented!();
   }

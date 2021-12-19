@@ -24,7 +24,7 @@ pub struct Commit {
   url: String,
 }
 
-pub fn fetchCommitsFromFile(cache_dir: &str, owner: &str, repo_name: &str) -> Vec<Commit> {
+pub fn fetch_commits_from_file(cache_dir: &str, owner: &str, repo_name: &str) -> Vec<Commit> {
   let file_path = format!("{}/{}/repos/{}/commits.json", cache_dir, owner, repo_name);
   println!("{}", file_path);
   let jstring = fs::read_to_string(file_path).unwrap();
@@ -32,9 +32,9 @@ pub fn fetchCommitsFromFile(cache_dir: &str, owner: &str, repo_name: &str) -> Ve
   json
 }
 
-pub fn fetchCommits(context: &Context, repo_name: &str) -> Vec<Commit> {
+pub fn fetch_commits(context: &Context, repo_name: &str) -> Vec<Commit> {
   if context.force_use_cache {
-    fetchCommitsFromFile(&context.cache_path, &context.owner, repo_name)
+    fetch_commits_from_file(&context.cache_path, &context.owner, repo_name)
   } else {
     unimplemented!();
   }

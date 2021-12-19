@@ -2,6 +2,8 @@ use chrono::prelude::*;
 use serde::{Serialize, Deserialize};
 use std::fs;
 use crate::context::Context;
+use super::client::GithubClient;
+use std::path::PathBuf;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct User {
@@ -19,20 +21,52 @@ pub struct User {
   pub created_at: DateTime<Utc>,
 }
 
-fn fetchUserFromFile(owner: &str, cache_dir: &str) -> User {
-  let jstring = fs::read_to_string(format!("{}/{}/user.json", cache_dir, owner)).unwrap();
+fn fetch_user_from_file(owner: &str, cache_dir: &str) -> Result<User, String> {
+  let jstring = match fs::read_to_string(format!("{}/{}/user.json", cache_dir, owner)) {
+    Ok(s) => s,
+    Err(err) => return Err(err.to_string())
+  };
   let json: User = serde_json::from_str(&jstring).unwrap();
-  json
+  Ok(json)
 }
 
-fn fetchUserFromNet(owner: &str) {
-  unimplemented!();
+fn fetch_user_from_net(owner: &str) -> Result<User, String> {
+  let client = GithubClient::new(&format!("users/{}", owner));
+  let response = client.get()?;
+  let user: User = response.json().unwrap();
+  Ok(user)
 }
 
-pub fn fetchUser(context: &Context) -> User {
+fn save_user(context: &Context, user: &User) -> Result<(), String> {
+  let mut save_dir = PathBuf::from(&context.cache_path);
+  if !save_dir.exists() || !save_dir.is_dir() {
+    if fs::create_dir(&save_dir).is_err() {
+      return Err(format!("Failed to create cache directory: {}", save_dir.to_string_lossy()).into());
+    }
+  }
+  save_dir.push(&user.name);
+  if !save_dir.exists() || !save_dir.is_dir() {
+    if fs::create_dir(&save_dir).is_err() {
+      return Err(format!("Failed to create cache directory: {}", save_dir.to_string_lossy()).into());
+    }
+  }
+  save_dir.push("user.json");
+  match fs::write(&save_dir, serde_json::to_string(user).unwrap()) {
+    Ok(()) => Ok(()),
+    Err(err) => Err(format!("Failed to create user cache: {} : {}", save_dir.to_string_lossy(), err.to_string())),
+  }
+}
+
+pub fn fetch_user(context: &Context) -> Result<User, String> {
   if context.force_use_cache {
-    fetchUserFromFile(&context.owner, &context.cache_path)
+    fetch_user_from_file(&context.owner, &context.cache_path)
   } else {
-    unimplemented!();
+    match fetch_user_from_net(&context.owner) {
+      Ok(user) => {
+        save_user(context, &user)?;
+        Ok(user)
+      },
+      Err(err) => Err(err),
+    }
   }
 }

@@ -1,4 +1,4 @@
-use vis_github::github::{user::fetchUser, repo::fetchRepositories, commit::fetchCommits};
+use vis_github::github::user::fetch_user;
 use vis_github::context::Context;
 
 fn main() {
@@ -6,12 +6,9 @@ fn main() {
     owner: "smallkirby".into(),
     cache_path: "./vis-cache".into(),
     force_use_cache: true,
+    apitoken: None,
   };
 
-  let skb = fetchUser(&context);
+  let skb = fetch_user(&context);
   println!("{:?}", skb);
-  let repos = fetchRepositories(&context);
-  println!("{:?}", repos);
-  let commits = fetchCommits(&context, "lysithea");
-  println!("{:?}", commits);
 }
