@@ -46,7 +46,7 @@ pub fn fetch_information(context: &Context) {
         println!("{}", err);
         process::exit(1);
       }
-      println!("Fetched user information of {} ({}).", user.login, user.name);
+      println!("Fetched user information of {} ({}).", user.login, user.name.unwrap_or("".into()));
     }
     Err(err) => {
       println!("{}", err);

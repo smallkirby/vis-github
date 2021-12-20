@@ -13,7 +13,6 @@ use reqwest::StatusCode;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct CommitAuthor {
-  pub name: String,
   pub email: String,
   pub date: DateTime<Utc>,
 }
@@ -25,10 +24,16 @@ pub struct CommitData {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+pub struct Committer {
+  pub login: String,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Commit {
   pub sha: String,
   pub commit: CommitData,
   pub url: String,
+  pub committer: Option<Committer>,
 }
 
 impl Commit {
@@ -98,7 +103,9 @@ pub fn fetch_commits_from_net(context: &Context, repo_name: &str) -> Result<Vec<
       StatusCode::CONFLICT  => vec![],
       _ => response.json().unwrap(),
     };
-    commits = commits.into_iter().filter(|commit| commit.commit.author.name == context.owner).collect();
+    commits = commits.into_iter().filter(|commit| 
+      commit.committer.is_some() && commit.committer.as_ref().unwrap().login == context.owner
+    ).collect();
     let fetched_size = commits.len();
     all_commits.append(&mut commits);
     if fetched_size < per_page as usize {

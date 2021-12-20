@@ -13,14 +13,14 @@ use std::path::PathBuf;
 #[derive(Serialize, Deserialize, Debug)]
 pub struct User {
   pub login: String,            // username
-  pub name: String,             // display name
+  pub name: Option<String>,     // display name
   pub id: u64,
   pub url: String,
   pub blog: Option<String>,
   pub location: Option<String>,
   pub email: Option<String>,
   pub public_repos: u64,
-  pub bio: String,
+  pub bio: Option<String>,
   pub followers: u64,
   pub following: u64,
   pub created_at: DateTime<Utc>,
@@ -49,7 +49,7 @@ pub fn save_user(context: &Context, user: &User) -> Result<(), String> {
       return Err(format!("Failed to create cache directory: {}", save_dir.to_string_lossy()).into());
     }
   }
-  save_dir.push(&user.name);
+  save_dir.push(&context.owner);
   if !save_dir.exists() || !save_dir.is_dir() {
     if fs::create_dir(&save_dir).is_err() {
       return Err(format!("Failed to create cache directory: {}", save_dir.to_string_lossy()).into());
