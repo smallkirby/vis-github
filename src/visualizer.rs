@@ -15,6 +15,6 @@ pub fn visualize_by_time(context: &Context, timemap: CommitTimeMap) {
     };
     let percentage = num as f64 / total as f64;
     let blocks = "▇".repeat((percentage * max_width as f64) as usize);
-    println!(" {:>2} {}", hour, blocks);
+    println!(" {:>2} ({:>5.1}%) {}", hour, percentage * 100.0, blocks);
   }
 }
