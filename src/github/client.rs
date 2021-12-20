@@ -13,7 +13,6 @@ pub struct GithubClient {
 impl GithubClient {
   pub fn new(path: &str, token: &Option<String>) -> GithubClient {
     let client = reqwest::blocking::Client::new();
-    println!("{}", format!("{}/{}", BASEURL, path)); // XXX
     let mut builder = client.get(format!("{}/{}", BASEURL, path))
         .header(USER_AGENT, "vis-github");
     if let Some(token_str) = token {

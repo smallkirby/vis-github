@@ -96,6 +96,7 @@ pub fn save_commits(context: &Context, repo_name: &str, commits: &Vec<Commit>) -
 pub fn fetch_commits_from_net(context: &Context, repo_name: &str) -> Result<Vec<Commit>, String> {
   let per_page = 100;
   let mut all_commits = vec!();
+
   for ix in 0 .. context.commit_limit_per_repo / per_page + 1 {
     let client = GithubClient::new(&format!("repos/{}/{}/commits?per_page={}&page={}", &context.owner, repo_name, per_page, ix + 1), &context.apitoken);
     let response = client.get()?;

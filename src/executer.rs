@@ -11,6 +11,12 @@ use super::analyzer::executer::*;
 use super::visualizer::*;
 
 use std::process;
+use console::{style, Emoji};
+use indicatif::{ProgressBar, ProgressStyle};
+
+static EMOJI_ROBOT: Emoji<'_, '_> = Emoji("🤖", "");
+static EMOJI_COMPUTER: Emoji<'_, '_> = Emoji("💻", "");
+static EMOJI_BOOKS: Emoji<'_, '_> = Emoji("📚", "");
 
 // show rate-limit status
 pub fn show_ratelimit(context: &Context) {
@@ -40,13 +46,13 @@ pub fn fetch_information(context: &Context) {
   }
 
   // fetch user information
+  println!("{} {} Fetching user information...", style("[1/3]").bold().dim(), EMOJI_ROBOT);
   match fetch_user_from_net(context) {
     Ok(user) => {
       if let Err(err) = save_user(context, &user) {
         println!("{}", err);
         process::exit(1);
       }
-      println!("Fetched user information of {} ({}).", user.login, user.name.unwrap_or("".into()));
     }
     Err(err) => {
       println!("{}", err);
@@ -55,6 +61,7 @@ pub fn fetch_information(context: &Context) {
   };
 
   // fetch repositories
+  println!("{} {} Fetching repositories overview...", style("[2/3]").bold().dim(), EMOJI_COMPUTER);
   match fetch_repositories(context) {
     Ok(repos) => {
       if let Err(err) = save_repos(context, &repos) {
@@ -68,12 +75,25 @@ pub fn fetch_information(context: &Context) {
       process::exit(1);
     }
   }
-  println!("Fetched {} repos.", fetched_repos.len());
 
   // fetch commits of each repos
-  println!("Fetching commit data for {} repos, which may takes several time...", fetched_repos.len());
+  println!("{} {} Fetching commit data for {} repos, which may takes several time...",
+    style("[3/3]").bold().dim(),
+    EMOJI_BOOKS,
+    fetched_repos.len());
+  let style = ProgressStyle::default_bar()
+      .template("[{elapsed_precise}] {bar:40.cyan/blue} {pos:>7}/{len:7} {msg}")
+      .progress_chars("##-");
+  let progress = ProgressBar::new(fetched_repos.len() as u64);
+  progress.set_style(style);
+
   for repo in fetched_repos {
-    if !repo.is_target(context) { continue; }
+    progress.set_message(repo.name.clone());
+
+    if !repo.is_target(context) {
+      progress.inc(1);
+      continue;
+    }
     match fetch_commits_from_net(context, &repo.name) {
       Ok(commits) => if let Err(err) = save_commits(context, &repo.name, &commits) {
         println!("{}", err);
@@ -84,6 +104,9 @@ pub fn fetch_information(context: &Context) {
         process::exit(1);
       }
     }
+
+    progress.inc(1);
+    progress.abandon_with_message("Complete");
   }
 }
 
