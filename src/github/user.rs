@@ -30,8 +30,8 @@ fn fetch_user_from_file(owner: &str, cache_dir: &str) -> Result<User, String> {
   Ok(json)
 }
 
-fn fetch_user_from_net(owner: &str) -> Result<User, String> {
-  let client = GithubClient::new(&format!("users/{}", owner));
+fn fetch_user_from_net(context: &Context) -> Result<User, String> {
+  let client = GithubClient::new(&format!("users/{}", &context.owner), &context.apitoken);
   let response = client.get()?;
   let user: User = response.json().unwrap();
   Ok(user)
@@ -61,7 +61,7 @@ pub fn fetch_user(context: &Context) -> Result<User, String> {
   if context.force_use_cache {
     fetch_user_from_file(&context.owner, &context.cache_path)
   } else {
-    match fetch_user_from_net(&context.owner) {
+    match fetch_user_from_net(context) {
       Ok(user) => {
         save_user(context, &user)?;
         Ok(user)

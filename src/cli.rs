@@ -1,4 +1,4 @@
-use clap::{App, Arg, ArgGroup, SubCommand};
+use clap::{App, Arg, SubCommand};
 
 pub fn build_cli() -> App<'static, 'static> {
   App::new("vis-github")
@@ -33,4 +33,12 @@ pub fn build_cli() -> App<'static, 'static> {
             .required(true),
         )
     ])
+    .arg(
+      Arg::with_name("token")
+      .short("t")
+      .long("token")
+      .takes_value(true)
+      .help("Your API token of Github")
+      .required(false),
+    )
 }

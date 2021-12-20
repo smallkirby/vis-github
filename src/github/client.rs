@@ -1,4 +1,4 @@
-use reqwest::header::USER_AGENT;
+use reqwest::header::{USER_AGENT, AUTHORIZATION};
 
 const BASEURL: &str = "https://api.github.com";
 
@@ -8,11 +8,15 @@ pub struct GithubClient {
 }
 
 impl GithubClient {
-  pub fn new(path: &str) -> GithubClient {
+  pub fn new(path: &str, token: &Option<String>) -> GithubClient {
     let client = reqwest::blocking::Client::new();
-    println!("{}", format!("{}/{}", BASEURL, path));
-    let builder = client.get(format!("{}/{}", BASEURL, path))
+    println!("{}", format!("{}/{}", BASEURL, path)); // XXX
+    let mut builder = client.get(format!("{}/{}", BASEURL, path))
         .header(USER_AGENT, "vis-github");
+    if let Some(token_str) = token {
+      builder = builder.header(AUTHORIZATION, format!("token {}", token_str));
+    }
+
     GithubClient {
       path: path.into(),
       client: builder,

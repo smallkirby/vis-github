@@ -1,6 +1,6 @@
 CARGO=cargo
 
 dev: Makefile
-	$(CARGO) run -- debug --owner smallkirby --cache-dir ./vis-cache
+	$(CARGO) run -- --token "${GITHUB_API_TOKEN}" rate --owner smallkirby --cache-dir ./vis-cache
 
 .PHONY: dev
