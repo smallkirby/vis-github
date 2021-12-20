@@ -1,3 +1,5 @@
+use dirs;
+
 #[derive(Debug, PartialEq)]
 pub enum Command {
   RATE,
@@ -27,9 +29,11 @@ pub struct Context {
 
 impl Default for Context {
   fn default() -> Self {
+    let mut cache_path = dirs::home_dir().unwrap();
+    cache_path.push(".vis-cache");
     Context {
       owner: "".into(),
-      cache_path: "~/vis-cache".into(),
+      cache_path: cache_path.to_string_lossy().to_string(),
       force_use_cache: false,
       apitoken: None,
       ignore_fork: true,

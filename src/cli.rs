@@ -53,6 +53,6 @@ pub fn build_cli() -> App<'static, 'static> {
         .long("cache-dir")
         .takes_value(true)
         .help("Cache directory")
-        .required(true),
+        .required(false),
     )
 }
