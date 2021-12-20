@@ -25,15 +25,18 @@ pub fn build_cli() -> App<'static, 'static> {
           .short("O")
           .long("owner")
           .takes_value(true)
+          .required(true)
           .help("Target owner of Github")
-        )
+        ),
+      SubCommand::with_name("vis")
+        .about("Visualize Github history.")
         .arg(
-          Arg::with_name("cache-dir")
-            .short("C")
-            .long("cache-dir")
-            .takes_value(true)
-            .help("Cache directory")
-            .required(true),
+          Arg::with_name("owner")
+          .short("O")
+          .long("owner")
+          .takes_value(true)
+          .required(true)
+          .help("Target owner of Github")
         )
     ])
     .arg(
@@ -43,5 +46,13 @@ pub fn build_cli() -> App<'static, 'static> {
       .takes_value(true)
       .help("Your API token of Github")
       .required(false),
+    )
+    .arg(
+      Arg::with_name("cache-dir")
+        .short("C")
+        .long("cache-dir")
+        .takes_value(true)
+        .help("Cache directory")
+        .required(true),
     )
 }

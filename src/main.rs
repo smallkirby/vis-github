@@ -9,6 +9,7 @@ fn main() {
   match context.command {
     Command::RATE => show_ratelimit(&context),
     Command::FETCH => fetch_information(&context),
+    Command::VIS => visualize(&context),
     Command::UNKNOWN => unimplemented!(),
   }
 }
@@ -20,14 +21,19 @@ pub fn parse_args() -> Context {
   if let Some(matches) = matches.value_of("token") {
     context.apitoken = Some(matches.into());
   }
+  if let Some(matches) = matches.value_of("cache-dir") {
+    context.cache_path = matches.into();
+  }
 
   if let Some(ref _matches) = matches.subcommand_matches("rate") {
     context.command = Command::RATE;
   } else if let Some(ref matches) = matches.subcommand_matches("fetch") {
     context.command = Command::FETCH;
     context.owner = matches.value_of("owner").unwrap().into();
-    context.cache_path = matches.value_of("cache-dir").unwrap().into();
     context.force_use_cache = matches.value_of("cache").is_some();
+  } else if let Some(ref matches) = matches.subcommand_matches("vis") {
+    context.command = Command::VIS;
+    context.owner = matches.value_of("owner").unwrap().into();
   } else {
     context.command = Command::UNKNOWN;
   }

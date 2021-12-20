@@ -2,6 +2,7 @@
 pub enum Command {
   RATE,
   FETCH,
+  VIS,
   UNKNOWN,
 }
 

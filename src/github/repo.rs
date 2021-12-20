@@ -38,7 +38,7 @@ impl Repository {
   }
 }
 
-fn fetch_repositories_from_file(owner: &str, cache_dir: &str) -> Result<Vec<Repository>, String> {
+pub fn fetch_repositories_from_file(owner: &str, cache_dir: &str) -> Result<Vec<Repository>, String> {
   let mut result_repos = vec!();
   let basedir = PathBuf::from(format!("{}/{}/repos", cache_dir, owner));
   if !basedir.exists() || !basedir.is_dir() {
@@ -99,7 +99,7 @@ pub fn save_repos(context: &Context, repos: &Vec<Repository>) -> Result<(), Stri
   Ok(())
 }
 
-fn fetch_repositories_from_net(context: &Context) -> Result<Vec<Repository>, String> {
+pub fn fetch_repositories_from_net(context: &Context) -> Result<Vec<Repository>, String> {
   let per_page = 100;
   let mut all_repos = vec!();
   for ix in 0 .. context.repo_limit_per_user / per_page + 1 {

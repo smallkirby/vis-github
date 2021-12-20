@@ -7,6 +7,8 @@
 
 use super::context::*;
 use super::github::{ratelimit::*, user::*, repo::*, commit::*};
+use super::analyzer::executer::*;
+use super::visualizer::*;
 
 use std::process;
 
@@ -83,4 +85,16 @@ pub fn fetch_information(context: &Context) {
       }
     }
   }
+}
+
+pub fn visualize(context: &Context) {
+  let time_map = match analyze_by_time(context) {
+    Ok(map) => map,
+    Err(err) => {
+      println!("{}", err);
+      process::exit(1);
+    }
+  };
+
+  visualize_by_time(context, time_map);
 }
