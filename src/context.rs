@@ -20,6 +20,7 @@ pub struct Context {
   pub ignore_fork: bool,
   pub ignore_private: bool,
   pub commit_limit_per_repo: u64,
+  pub repo_limit_per_user: u64,
   pub command: Command,
 }
 
@@ -33,6 +34,7 @@ impl Default for Context {
       ignore_fork: true,
       ignore_private: true,
       commit_limit_per_repo: 999,
+      repo_limit_per_user: 999,
       command: Command::default(),
     }
   }

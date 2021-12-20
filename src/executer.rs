@@ -6,7 +6,7 @@
 */
 
 use super::context::*;
-use super::github::{ratelimit::*, user::*, repo::*};
+use super::github::{ratelimit::*, user::*, repo::*, commit::*};
 
 use std::process;
 
@@ -30,6 +30,8 @@ pub fn show_ratelimit(context: &Context) {
 // fetch information using Github API.
 // this function doesn't read cache even if it exists.
 pub fn fetch_information(context: &Context) {
+  let mut fetched_repos = vec!();
+
   if context.owner.is_empty() {
     println!("[ERROR] username not specified.");
     process::exit(1);
@@ -57,11 +59,28 @@ pub fn fetch_information(context: &Context) {
         println!("{}", err);
         process::exit(1);
       }
-      println!("Fetched {} repos.", repos.len());
+      fetched_repos = repos;
     }
     Err(err) => {
       println!("{}", err);
       process::exit(1);
+    }
+  }
+  println!("Fetched {} repos.", fetched_repos.len());
+
+  // fetch commits of each repos
+  println!("Fetching commit data for {} repos, which may takes several time...", fetched_repos.len());
+  for repo in fetched_repos {
+    if !repo.is_target(context) { continue; }
+    match fetch_commits_from_net(context, &repo.name) {
+      Ok(commits) => if let Err(err) = save_commits(context, &repo.name, &commits) {
+        println!("{}", err);
+        process::exit(1);
+      }
+      Err(err) => {
+        println!("{}", err);
+        process::exit(1);
+      }
     }
   }
 }

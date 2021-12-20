@@ -29,6 +29,15 @@ pub struct Repository {
   pub default_branch: String,
 }
 
+impl Repository {
+  pub fn is_target(&self, context: &Context) -> bool {
+    let fork = context.ignore_fork && self.fork;
+    let private = context.ignore_private && self.private;
+
+    !(fork || private)
+  }
+}
+
 fn fetch_repositories_from_file(owner: &str, cache_dir: &str) -> Result<Vec<Repository>, String> {
   let mut result_repos = vec!();
   let basedir = PathBuf::from(format!("{}/{}/repos", cache_dir, owner));
@@ -93,7 +102,7 @@ pub fn save_repos(context: &Context, repos: &Vec<Repository>) -> Result<(), Stri
 fn fetch_repositories_from_net(context: &Context) -> Result<Vec<Repository>, String> {
   let per_page = 100;
   let mut all_repos = vec!();
-  for ix in 0 .. context.commit_limit_per_repo / per_page + 1 {
+  for ix in 0 .. context.repo_limit_per_user / per_page + 1 {
     let client = GithubClient::new(&format!("users/{}/repos?per_page={}&page={}", &context.owner, per_page, ix + 1), &context.apitoken);
     let response = client.get()?;
     let mut repos: Vec<Repository> = response.json().unwrap();
