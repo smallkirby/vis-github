@@ -5,10 +5,11 @@
 use crate::context::Context;
 use super::client::*;
 
-use chrono::{prelude::*, NaiveDateTime};
+use chrono::prelude::*;
 use serde::{Serialize, Deserialize};
 use std::fs;
 use std::path::PathBuf;
+use reqwest::StatusCode;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct CommitAuthor {
@@ -93,7 +94,10 @@ pub fn fetch_commits_from_net(context: &Context, repo_name: &str) -> Result<Vec<
   for ix in 0 .. context.commit_limit_per_repo / per_page + 1 {
     let client = GithubClient::new(&format!("repos/{}/{}/commits?per_page={}&page={}", &context.owner, repo_name, per_page, ix + 1), &context.apitoken);
     let response = client.get()?;
-    let mut commits: Vec<Commit> = response.json().unwrap();
+    let mut commits: Vec<Commit> = match response.status() {
+      StatusCode::CONFLICT  => vec![],
+      _ => response.json().unwrap(),
+    };
     commits = commits.into_iter().filter(|commit| commit.commit.author.name == context.owner).collect();
     let fetched_size = commits.len();
     all_commits.append(&mut commits);

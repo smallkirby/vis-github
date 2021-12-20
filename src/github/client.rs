@@ -1,4 +1,7 @@
-use reqwest::header::{USER_AGENT, AUTHORIZATION};
+use reqwest::{
+  header::{USER_AGENT, AUTHORIZATION},
+  StatusCode,
+};
 
 const BASEURL: &str = "https://api.github.com";
 
@@ -29,6 +32,8 @@ impl GithubClient {
     match _result {
       Ok(result) => {
         if result.status().is_success() {
+          Ok(result)
+        } else if result.status() == StatusCode::CONFLICT {
           Ok(result)
         } else {
           Err(format!("Error code for {} API: {}", self.path, result.status()))
