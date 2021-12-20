@@ -35,8 +35,8 @@ fn fetch_ratelimit(context: &Context) -> Result<Ratelimit, String> {
 pub fn show_ratelimit(context: &Context) {
   match fetch_ratelimit(context) {
     Ok(ratelimit) => {
-      let user = if context.owner.is_empty() { "(not authorized)" } else { &context.owner };
-      println!("User      : {}", user);
+      let authed = if context.apitoken.is_some() { "yes" } else { "no" };
+      println!("Authed    : {}", authed);
       println!("Remaining : {}", ratelimit.remaining);
       println!("Used      : {}", ratelimit.used);
       println!("Reset     : {}", ratelimit.date_reset());
