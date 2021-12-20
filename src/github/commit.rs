@@ -103,10 +103,10 @@ pub fn fetch_commits_from_net(context: &Context, repo_name: &str) -> Result<Vec<
       StatusCode::CONFLICT  => vec![],
       _ => response.json().unwrap(),
     };
+    let fetched_size = commits.len();
     commits = commits.into_iter().filter(|commit| 
       commit.committer.is_some() && commit.committer.as_ref().unwrap().login == context.owner
     ).collect();
-    let fetched_size = commits.len();
     all_commits.append(&mut commits);
     if fetched_size < per_page as usize {
       break;
