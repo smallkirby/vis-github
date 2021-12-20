@@ -1,10 +1,16 @@
 use crate::context::*;
 use crate::analyzer::separator::*;
 
+use console::{style, Emoji};
+
+static EMOJI_GRASS: Emoji<'_, '_> = Emoji("🔍", "");
+static EMOJI_CLOCK: Emoji<'_, '_> = Emoji("🕐", "");
+
 pub fn visualize_by_time(context: &Context, timemap: CommitTimeMap) {
   let total = timemap.iter().fold(0, |acc, (_hour, count)| acc + count);
-  println!("{}'s time map", context.owner);
-  println!("  total: {} commits", total);
+  println!("");
+  println!("{} {}'s time map {}\n", EMOJI_GRASS, style(context.owner.clone()).green(), EMOJI_CLOCK);
+  println!("  total: {} commits", style(total).yellow());
   println!("");
 
   let max_width = 100;
