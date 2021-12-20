@@ -1,6 +1,5 @@
-use vis_github::github::repo::fetch_repositories;
-use vis_github::github::ratelimit::show_ratelimit;
 use vis_github::context::{Context, Command};
+use vis_github::executer::*;
 
 mod cli;
 
@@ -9,10 +8,7 @@ fn main() {
 
   match context.command {
     Command::RATE => show_ratelimit(&context),
-    Command::DEBUG => { // XXX
-      let skb = fetch_repositories(&context);
-      println!("{:?}", skb);
-    },
+    Command::FETCH => fetch_information(&context),
     Command::UNKNOWN => unimplemented!(),
   }
 }
@@ -27,10 +23,11 @@ pub fn parse_args() -> Context {
 
   if let Some(ref _matches) = matches.subcommand_matches("rate") {
     context.command = Command::RATE;
-  } else if let Some(ref matches) = matches.subcommand_matches("debug") {
-    context.command = Command::DEBUG;
+  } else if let Some(ref matches) = matches.subcommand_matches("fetch") {
+    context.command = Command::FETCH;
     context.owner = matches.value_of("owner").unwrap().into();
     context.cache_path = matches.value_of("cache-dir").unwrap().into();
+    context.force_use_cache = matches.value_of("cache").is_some();
   } else {
     context.command = Command::UNKNOWN;
   }

@@ -1,16 +1,21 @@
+/*
+  This file defines User related types and functions.
+*/
+
+use crate::context::Context;
+use super::client::GithubClient;
+
 use chrono::prelude::*;
 use serde::{Serialize, Deserialize};
 use std::fs;
-use crate::context::Context;
-use super::client::GithubClient;
 use std::path::PathBuf;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct User {
-  pub login: String,
+  pub login: String,            // username
+  pub name: String,             // display name
   pub id: u64,
   pub url: String,
-  pub name: String,
   pub blog: Option<String>,
   pub location: Option<String>,
   pub email: Option<String>,
@@ -30,14 +35,14 @@ fn fetch_user_from_file(owner: &str, cache_dir: &str) -> Result<User, String> {
   Ok(json)
 }
 
-fn fetch_user_from_net(context: &Context) -> Result<User, String> {
+pub fn fetch_user_from_net(context: &Context) -> Result<User, String> {
   let client = GithubClient::new(&format!("users/{}", &context.owner), &context.apitoken);
   let response = client.get()?;
   let user: User = response.json().unwrap();
   Ok(user)
 }
 
-fn save_user(context: &Context, user: &User) -> Result<(), String> {
+pub fn save_user(context: &Context, user: &User) -> Result<(), String> {
   let mut save_dir = PathBuf::from(&context.cache_path);
   if !save_dir.exists() || !save_dir.is_dir() {
     if fs::create_dir(&save_dir).is_err() {

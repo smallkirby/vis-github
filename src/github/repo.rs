@@ -1,8 +1,13 @@
+/*
+  Thsi file defines Repository related types and functions.
+*/
+
+use crate::context::Context;
+use super::client::GithubClient;
+
 use chrono::prelude::*;
 use serde::{Serialize, Deserialize};
 use std::fs;
-use crate::context::Context;
-use super::client::GithubClient;
 use std::path::PathBuf;
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -46,7 +51,7 @@ fn fetch_repositories_from_file(owner: &str, cache_dir: &str) -> Result<Vec<Repo
   Ok(result_repos)
 }
 
-fn save_repos(context: &Context, repos: &Vec<Repository>) -> Result<(), String> {
+pub fn save_repos(context: &Context, repos: &Vec<Repository>) -> Result<(), String> {
   let mut save_dir = PathBuf::from(&context.cache_path);
   let user = context.owner.as_str();
   if !save_dir.exists() || !save_dir.is_dir() {
@@ -92,8 +97,9 @@ fn fetch_repositories_from_net(context: &Context) -> Result<Vec<Repository>, Str
     let client = GithubClient::new(&format!("users/{}/repos?per_page={}&page={}", &context.owner, per_page, ix + 1), &context.apitoken);
     let response = client.get()?;
     let mut repos: Vec<Repository> = response.json().unwrap();
+    let fetched_size = repos.len();
     all_repos.append(&mut repos);
-    if repos.len() < per_page as usize {
+    if fetched_size < per_page as usize {
       break;
     }
   }

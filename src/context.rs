@@ -1,7 +1,7 @@
 #[derive(Debug, PartialEq)]
 pub enum Command {
   RATE,
-  DEBUG,
+  FETCH,
   UNKNOWN,
 }
 
@@ -10,6 +10,7 @@ impl Default for Command {
     Self::UNKNOWN
   }
 }
+
 #[derive(Debug)]
 pub struct Context {
   pub owner: String,

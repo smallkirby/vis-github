@@ -1,3 +1,7 @@
+/*
+ * This file defines subcommands of `vis-github` and their command-line arguments.
+ */
+
 use clap::{App, Arg, SubCommand};
 
 pub fn build_cli() -> App<'static, 'static> {
@@ -14,15 +18,14 @@ pub fn build_cli() -> App<'static, 'static> {
           .takes_value(true)
           .help("Target owner of Github")
         ),
-      SubCommand::with_name("debug")
-        .about("nirugiri")
+      SubCommand::with_name("fetch")
+        .about("Fetch user and repos information for specified owner.")
         .arg(
           Arg::with_name("owner")
           .short("O")
           .long("owner")
           .takes_value(true)
           .help("Target owner of Github")
-          .required(true),
         )
         .arg(
           Arg::with_name("cache-dir")
