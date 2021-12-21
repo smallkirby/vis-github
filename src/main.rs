@@ -1,4 +1,4 @@
-use vis_github::context::{Context, Command};
+use vis_github::context::{Context, Command, VisualizeType};
 use vis_github::executer::*;
 
 mod cli;
@@ -34,6 +34,15 @@ pub fn parse_args() -> Context {
   } else if let Some(ref matches) = matches.subcommand_matches("vis") {
     context.command = Command::VIS;
     context.owner = matches.value_of("owner").unwrap().into();
+    context.vis_type = if let Some(method) = matches.value_of("by") {
+      match method {
+        "time" => VisualizeType::TIME,
+        "license" => VisualizeType::LICENSE,
+        _ => VisualizeType::UNKNOWN,
+      }
+    } else {
+      VisualizeType::TIME
+    };
   } else {
     context.command = Command::UNKNOWN;
   }

@@ -3,7 +3,10 @@
 */
 
 use crate::context::Context;
-use super::client::GithubClient;
+use super::{
+  client::GithubClient,
+  license::License,
+};
 
 use chrono::prelude::*;
 use serde::{Serialize, Deserialize};
@@ -27,6 +30,7 @@ pub struct Repository {
   pub open_issues_count: u64,
   pub watchers: u64,
   pub default_branch: String,
+  pub license: Option<License>,
 }
 
 impl Repository {

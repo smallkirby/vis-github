@@ -8,6 +8,13 @@ pub enum Command {
   UNKNOWN,
 }
 
+#[derive(Debug, PartialEq)]
+pub enum VisualizeType {
+  TIME,
+  LICENSE,
+  UNKNOWN,
+}
+
 impl Default for Command {
   fn default() -> Self {
     Self::UNKNOWN
@@ -25,6 +32,7 @@ pub struct Context {
   pub commit_limit_per_repo: u64,
   pub repo_limit_per_user: u64,
   pub command: Command,
+  pub vis_type: VisualizeType,
 }
 
 impl Default for Context {
@@ -41,6 +49,7 @@ impl Default for Context {
       commit_limit_per_repo: 999,
       repo_limit_per_user: 999,
       command: Command::default(),
+      vis_type: VisualizeType::UNKNOWN,
     }
   }
 }

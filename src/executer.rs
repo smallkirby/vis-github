@@ -111,13 +111,31 @@ pub fn fetch_information(context: &Context) {
 }
 
 pub fn visualize(context: &Context) {
-  let time_map = match analyze_by_time(context) {
-    Ok(map) => map,
-    Err(err) => {
-      println!("{}", err);
+  match context.vis_type {
+    VisualizeType::TIME => {
+      let time_map = match analyze_by_time(context) {
+        Ok(map) => map,
+        Err(err) => {
+          println!("{}", err);
+          process::exit(1);
+        }
+      };
+
+      visualize_by_time(context, time_map);
+    }
+
+    VisualizeType::LICENSE => {
+      if let Ok(license_map) = analyze_by_license(context) {
+        visualize_by_license(context, license_map);
+      } else {
+        println!("[ERROR] failed to analyze repositories.");
+        process::exit(1);
+      }
+    }
+
+    VisualizeType::UNKNOWN => {
+      println!("[ERROR] unknown visualize type.");
       process::exit(1);
     }
-  };
-
-  visualize_by_time(context, time_map);
+  }
 }

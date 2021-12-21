@@ -38,6 +38,12 @@ pub fn build_cli() -> App<'static, 'static> {
           .required(true)
           .help("Target owner of Github")
         )
+        .arg(
+          Arg::with_name("by")
+          .long("by")
+          .takes_value(true)
+          .help("Visualize method")
+        )
     ])
     .arg(
       Arg::with_name("token")

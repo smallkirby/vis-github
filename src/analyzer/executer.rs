@@ -30,3 +30,13 @@ pub fn analyze_by_time(context: &Context) -> Result<CommitTimeMap, String> {
 
   Ok(time_map)
 }
+
+pub fn analyze_by_license(context: &Context) -> Result<LicenseMap, String> {
+  if context.owner.is_empty() {
+    return Err("[ERROR] username not specified.".into());
+  }
+
+  let repos = fetch_repositories_from_file(&context.owner, &context.cache_path)?;
+  let target_repos: Vec<Repository> = repos.into_iter().filter(|repo| repo.is_target(context)).collect();
+  Ok(devide_by_license(&target_repos))
+}
