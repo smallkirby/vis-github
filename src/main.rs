@@ -1,4 +1,4 @@
-use vis_github::context::{Context, Command, VisualizeType};
+use vis_github::context::{Command, Context, VisualizeType};
 use vis_github::executer::*;
 
 mod cli;

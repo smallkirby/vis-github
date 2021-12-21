@@ -13,45 +13,45 @@ pub fn build_cli() -> App<'static, 'static> {
         .about("Show ratelimit for Github API")
         .arg(
           Arg::with_name("owner")
-          .short("O")
-          .long("owner")
-          .takes_value(true)
-          .help("Target owner of Github")
+            .short("O")
+            .long("owner")
+            .takes_value(true)
+            .help("Target owner of Github"),
         ),
       SubCommand::with_name("fetch")
         .about("Fetch user and repos information for specified owner.")
         .arg(
           Arg::with_name("owner")
-          .short("O")
-          .long("owner")
-          .takes_value(true)
-          .required(true)
-          .help("Target owner of Github")
+            .short("O")
+            .long("owner")
+            .takes_value(true)
+            .required(true)
+            .help("Target owner of Github"),
         ),
       SubCommand::with_name("vis")
         .about("Visualize Github history.")
         .arg(
           Arg::with_name("owner")
-          .short("O")
-          .long("owner")
-          .takes_value(true)
-          .required(true)
-          .help("Target owner of Github")
+            .short("O")
+            .long("owner")
+            .takes_value(true)
+            .required(true)
+            .help("Target owner of Github"),
         )
         .arg(
           Arg::with_name("by")
-          .long("by")
-          .takes_value(true)
-          .help("Visualize method")
-        )
+            .long("by")
+            .takes_value(true)
+            .help("Visualize method"),
+        ),
     ])
     .arg(
       Arg::with_name("token")
-      .short("t")
-      .long("token")
-      .takes_value(true)
-      .help("Your API token of Github")
-      .required(false),
+        .short("t")
+        .long("token")
+        .takes_value(true)
+        .help("Your API token of Github")
+        .required(false),
     )
     .arg(
       Arg::with_name("cache-dir")

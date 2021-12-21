@@ -1,8 +1,4 @@
-use crate::{
-  context::*,
-  analyzer::separator::*,
-  github::license::*,
-};
+use crate::{analyzer::separator::*, context::*, github::license::*};
 
 use console::{style, Emoji};
 
@@ -13,7 +9,12 @@ static EMOJI_SCHOLAR: Emoji<'_, '_> = Emoji("🎓️", "");
 pub fn visualize_by_time(context: &Context, timemap: CommitTimeMap) {
   let total = timemap.iter().fold(0, |acc, (_hour, count)| acc + count);
   println!("");
-  println!("{} {}'s time map {}\n", EMOJI_GRASS, style(context.owner.clone()).green(), EMOJI_CLOCK);
+  println!(
+    "{} {}'s time map {}\n",
+    EMOJI_GRASS,
+    style(context.owner.clone()).green(),
+    EMOJI_CLOCK
+  );
   println!("  total: {} commits", style(total).yellow());
   println!("");
 
@@ -31,13 +32,18 @@ pub fn visualize_by_time(context: &Context, timemap: CommitTimeMap) {
 
 pub fn visualize_by_license(context: &Context, license_map: LicenseMap) {
   let mut license_vec: Vec<(License, u64)> = license_map.into_iter().collect();
-  license_vec.sort_by(|a,b| {
-    b.1.partial_cmp(&a.1).unwrap()
-  });
+  license_vec.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
 
-  let total_repo = license_vec.iter().fold(0, |acc, (_license, count)| acc + count);
+  let total_repo = license_vec
+    .iter()
+    .fold(0, |acc, (_license, count)| acc + count);
   println!("");
-  println!("{} {}'s LICENSE map {}\n", EMOJI_GRASS, style(context.owner.clone()).green(), EMOJI_SCHOLAR);
+  println!(
+    "{} {}'s LICENSE map {}\n",
+    EMOJI_GRASS,
+    style(context.owner.clone()).green(),
+    EMOJI_SCHOLAR
+  );
   println!("  total: {} repos", style(total_repo).yellow());
   println!("");
 
@@ -51,6 +57,11 @@ pub fn visualize_by_license(context: &Context, license_map: LicenseMap) {
     let blocks = "▇".repeat((percentage * max_width as f64) as usize);
     let space_num = max_name_width - license.name.len();
     print!(" {}", " ".repeat(space_num));
-    println!(" {} ({:>5.1}%): {}", license.name, percentage * 100.0, blocks);
+    println!(
+      " {} ({:>5.1}%): {}",
+      license.name,
+      percentage * 100.0,
+      blocks
+    );
   }
 }

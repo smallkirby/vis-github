@@ -2,18 +2,18 @@
   This file defines User related types and functions.
 */
 
-use crate::context::Context;
 use super::client::GithubClient;
+use crate::context::Context;
 
 use chrono::prelude::*;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct User {
-  pub login: String,            // username
-  pub name: Option<String>,     // display name
+  pub login: String,        // username
+  pub name: Option<String>, // display name
   pub id: u64,
   pub url: String,
   pub blog: Option<String>,
@@ -29,7 +29,7 @@ pub struct User {
 fn fetch_user_from_file(owner: &str, cache_dir: &str) -> Result<User, String> {
   let jstring = match fs::read_to_string(format!("{}/{}/user.json", cache_dir, owner)) {
     Ok(s) => s,
-    Err(err) => return Err(err.to_string())
+    Err(err) => return Err(err.to_string()),
   };
   let json: User = serde_json::from_str(&jstring).unwrap();
   Ok(json)
@@ -46,19 +46,35 @@ pub fn save_user(context: &Context, user: &User) -> Result<(), String> {
   let mut save_dir = PathBuf::from(&context.cache_path);
   if !save_dir.exists() || !save_dir.is_dir() {
     if fs::create_dir(&save_dir).is_err() {
-      return Err(format!("Failed to create cache directory: {}", save_dir.to_string_lossy()).into());
+      return Err(
+        format!(
+          "Failed to create cache directory: {}",
+          save_dir.to_string_lossy()
+        )
+        .into(),
+      );
     }
   }
   save_dir.push(&context.owner);
   if !save_dir.exists() || !save_dir.is_dir() {
     if fs::create_dir(&save_dir).is_err() {
-      return Err(format!("Failed to create cache directory: {}", save_dir.to_string_lossy()).into());
+      return Err(
+        format!(
+          "Failed to create cache directory: {}",
+          save_dir.to_string_lossy()
+        )
+        .into(),
+      );
     }
   }
   save_dir.push("user.json");
   match fs::write(&save_dir, serde_json::to_string(user).unwrap()) {
     Ok(()) => Ok(()),
-    Err(err) => Err(format!("Failed to create user cache: {} : {}", save_dir.to_string_lossy(), err.to_string())),
+    Err(err) => Err(format!(
+      "Failed to create user cache: {} : {}",
+      save_dir.to_string_lossy(),
+      err.to_string()
+    )),
   }
 }
 
@@ -70,7 +86,7 @@ pub fn fetch_user(context: &Context) -> Result<User, String> {
       Ok(user) => {
         save_user(context, &user)?;
         Ok(user)
-      },
+      }
       Err(err) => Err(err),
     }
   }

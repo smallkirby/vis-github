@@ -1,7 +1,7 @@
-use serde::{Serialize, Deserialize};
-use crate::context::Context;
 use super::client::GithubClient;
-use chrono::{DateTime, NaiveDateTime, Local, prelude::*};
+use crate::context::Context;
+use chrono::{prelude::*, DateTime, Local, NaiveDateTime};
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Ratelimit {

@@ -1,5 +1,5 @@
 use reqwest::{
-  header::{USER_AGENT, AUTHORIZATION},
+  header::{AUTHORIZATION, USER_AGENT},
   StatusCode,
 };
 
@@ -13,8 +13,9 @@ pub struct GithubClient {
 impl GithubClient {
   pub fn new(path: &str, token: &Option<String>) -> GithubClient {
     let client = reqwest::blocking::Client::new();
-    let mut builder = client.get(format!("{}/{}", BASEURL, path))
-        .header(USER_AGENT, "vis-github");
+    let mut builder = client
+      .get(format!("{}/{}", BASEURL, path))
+      .header(USER_AGENT, "vis-github");
     if let Some(token_str) = token {
       builder = builder.header(AUTHORIZATION, format!("token {}", token_str));
     }
@@ -35,12 +36,14 @@ impl GithubClient {
         } else if result.status() == StatusCode::CONFLICT {
           Ok(result)
         } else {
-          Err(format!("Error code for {} API: {}", self.path, result.status()))
+          Err(format!(
+            "Error code for {} API: {}",
+            self.path,
+            result.status()
+          ))
         }
       }
-      Err(_err) => {
-        Err(format!("Failed to access API for {}", self.path))
-      }
+      Err(_err) => Err(format!("Failed to access API for {}", self.path)),
     }
   }
 }

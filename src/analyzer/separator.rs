@@ -1,4 +1,4 @@
-use crate::github::{repo::*, commit::*, license::*};
+use crate::github::{commit::*, license::*, repo::*};
 use chrono::prelude::*;
 use std::collections::HashMap;
 
