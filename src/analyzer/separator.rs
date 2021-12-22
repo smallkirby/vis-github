@@ -1,4 +1,4 @@
-use crate::github::{commit::*, license::*, repo::*};
+use crate::github::{commit::*, language::Language, license::*, repo::*};
 use chrono::prelude::*;
 use std::collections::HashMap;
 
@@ -32,6 +32,30 @@ pub fn devide_by_license(repos: &Vec<Repository>) -> LicenseMap {
     } else {
       let count = map.entry(NOLICENSE.clone()).or_insert(0);
       *count += 1;
+    }
+  }
+
+  map
+}
+
+pub fn devide_by_language(repos: &Vec<Repository>) -> Vec<Language> {
+  let mut map: Vec<Language> = vec![];
+  for repo in repos {
+    if let Some(languages) = &repo.languages {
+      for language in languages {
+        let mut existing = false;
+        for existing_lang in &mut map {
+          if existing_lang.name == language.name {
+            existing_lang.lines += language.lines;
+            existing = true;
+            break;
+          }
+        }
+
+        if !existing {
+          map.push(language.clone());
+        }
+      }
     }
   }
 

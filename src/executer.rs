@@ -148,6 +148,15 @@ pub fn visualize(context: &Context) {
       }
     }
 
+    VisualizeType::LANGUAGE => {
+      if let Ok(mut language_map) = analyze_by_language(context) {
+        visualize_by_language(context, &mut language_map);
+      } else {
+        println!("[ERROR] failed to analyze repositories.");
+        process::exit(1);
+      }
+    }
+
     VisualizeType::UNKNOWN => {
       println!("[ERROR] unknown visualize type.");
       process::exit(1);

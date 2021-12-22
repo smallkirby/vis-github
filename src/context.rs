@@ -12,6 +12,7 @@ pub enum Command {
 pub enum VisualizeType {
   TIME,
   LICENSE,
+  LANGUAGE,
   UNKNOWN,
 }
 

@@ -2,13 +2,18 @@
   Thsi file defines Repository related types and functions.
 */
 
-use super::{client::GithubClient, license::License};
+use super::{client::GithubClient, language::Language, license::License};
 use crate::context::Context;
 
 use chrono::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::PathBuf;
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Owner {
+  pub login: String,
+  pub id: u64,
+}
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Repository {
@@ -21,13 +26,15 @@ pub struct Repository {
   pub created_at: DateTime<Utc>,
   pub updated_at: DateTime<Utc>,
   pub homepage: Option<String>,
-  pub language: Option<String>,
+  pub main_language: Option<String>,
   pub forks_count: u64,
   pub archived: bool,
   pub open_issues_count: u64,
   pub watchers: u64,
   pub default_branch: String,
   pub license: Option<License>,
+  pub languages: Option<Vec<Language>>, // not in /repos API
+  pub owner: Owner,
 }
 
 impl Repository {
@@ -151,6 +158,9 @@ pub fn fetch_repositories_from_net(context: &Context) -> Result<Vec<Repository>,
     );
     let response = client.get()?;
     let mut repos: Vec<Repository> = response.json().unwrap();
+    for repo in &mut repos {
+      repo.fetch_load_languages(context);
+    }
     let fetched_size = repos.len();
     all_repos.append(&mut repos);
     if fetched_size < per_page as usize {

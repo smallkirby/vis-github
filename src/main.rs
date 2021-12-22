@@ -38,6 +38,7 @@ pub fn parse_args() -> Context {
       match method {
         "time" => VisualizeType::TIME,
         "license" => VisualizeType::LICENSE,
+        "language" => VisualizeType::LANGUAGE,
         _ => VisualizeType::UNKNOWN,
       }
     } else {
